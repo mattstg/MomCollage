@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
+using System.Diagnostics;
 
 public class PictureSelectScript : MonoBehaviour
 {
@@ -10,11 +11,13 @@ public class PictureSelectScript : MonoBehaviour
     public Image imgToColor;
     public Text fileNameText;
     public string filePath;
-    public bool wasSelected;
     // Start is called before the first frame update
 
-    public void Initialize(string _filePath)
+    PictureSelectedDelg selectionDelg;
+
+    public void Initialize(string _filePath, PictureSelectedDelg _selectionDelg)
     {
+        selectionDelg = _selectionDelg;
         filePath = _filePath;
         LoadImages(filePath);
         fileNameText.text = Path.GetFileNameWithoutExtension(filePath);
@@ -23,8 +26,7 @@ public class PictureSelectScript : MonoBehaviour
 
     public void ButtonPressed()
     {
-        wasSelected = !wasSelected;
-        imgToColor.color = (wasSelected) ? Color.blue : Color.white;
+        selectionDelg.Invoke(filePath);
     }
 
     private void LoadImages(string filePath)
