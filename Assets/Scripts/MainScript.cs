@@ -57,6 +57,7 @@ public class MainScript : MonoBehaviour
         string outputFolderPath = Path.Combine(mainFolderLocation, selectFolderLocation.options[selectFolderLocation.value].text, "Labelled\\");
         string outputForOriginalFilePath = Path.Combine(mainFolderLocation, selectFolderLocation.options[selectFolderLocation.value].text, "Processed\\");
         string captionText = annotationField.text;
+        captionText = captionText + '\n';
 
         if(!Directory.Exists(outputFolderPath))
         {
@@ -95,9 +96,34 @@ public class MainScript : MonoBehaviour
 
     public void SubmitButtonPressed()
     {
-        ExecuteIMCode();
+        if(selectablePicturesList.Count > 0 && currentlySelectedIndex >= 0)
+            ExecuteIMCode();
         //Run ImageMagik
         //move files to correct folders
+    }
+
+    public void OpenFolderLocation()
+    {
+        ShowExplorer();
+    }
+
+    private void ShowExplorer()
+    {
+        string itemPath = "";
+        if(selectablePicturesList.Count > 0)
+        {
+            itemPath = selectablePicturesList[0].filePath;
+        }
+        else if(!string.IsNullOrEmpty(folderNameSelected))
+        {
+            itemPath = folderNameSelected;
+        }
+        else
+        {
+            return;
+        }
+        itemPath = itemPath.Replace(@"/", @"\");   // explorer doesn't like front slashes
+        System.Diagnostics.Process.Start("explorer.exe", "/select," + itemPath);
     }
 
     private void SelectImageByName(string imgName)
@@ -117,6 +143,9 @@ public class MainScript : MonoBehaviour
 
     private void SelectImageIndex(int indexSelected)
     {
+        if (indexSelected >= selectablePicturesList.Count)
+            return;
+
         currentlySelectedIndex = indexSelected;
         string path = selectablePicturesList[indexSelected].filePath;
 
@@ -129,14 +158,20 @@ public class MainScript : MonoBehaviour
 
     public void SelectNextImage()
     {
-        SelectImageIndex((currentlySelectedIndex + 1) % selectablePicturesList.Count);
+        if (selectablePicturesList.Count > 0)
+        {
+            SelectImageIndex((currentlySelectedIndex + 1) % selectablePicturesList.Count);
+        }
     }
 
     public void SelectPreviousImage()
     {
-        int newIndex = (currentlySelectedIndex - 1) % selectablePicturesList.Count;
-        newIndex = (newIndex < 0) ? selectablePicturesList.Count - 1 : newIndex;
-        SelectImageIndex(newIndex);
+        if (selectablePicturesList.Count > 0)
+        {
+            int newIndex = (currentlySelectedIndex - 1) % selectablePicturesList.Count;
+            newIndex = (newIndex < 0) ? selectablePicturesList.Count - 1 : newIndex;
+            SelectImageIndex(newIndex);
+        }
     }
 
     public void FolderSelected(int newIndex)
