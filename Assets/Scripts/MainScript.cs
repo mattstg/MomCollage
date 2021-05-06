@@ -42,6 +42,14 @@ public class MainScript : MonoBehaviour
         FillSelectFolderDropdown();
     }
 
+    private void OnEnable()
+    {
+        if (PlayerPrefs.HasKey("MainDirPath"))
+        {
+            mainFolderLocation = PlayerPrefs.GetString("MainDirPath");
+        }
+    }
+
     private void FillSelectFolderDropdown()
     {
         selectFolderLocation.ClearOptions();
