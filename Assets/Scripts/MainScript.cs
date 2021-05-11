@@ -14,7 +14,8 @@ using System.Diagnostics;
 
 public class MainScript : MonoBehaviour
 {
-    public static string mainFolderLocation = "C:/Users/mgermain/Pictures/TestPictures/";
+    public static string mainFolderLocation = "C:/Users/Fortunata/Pictures";
+    public static string imageMagikLocation = @"G:/ImageMagick/convert.exe";
 
     public GameObject previewSelectablePrefab;
 
@@ -48,6 +49,11 @@ public class MainScript : MonoBehaviour
         {
             mainFolderLocation = PlayerPrefs.GetString("MainDirPath");
         }
+
+        if (PlayerPrefs.HasKey("ImgMagikDirPath"))
+        {
+            imageMagikLocation = PlayerPrefs.GetString("ImgMagikDirPath");
+        }
     }
 
     private void FillSelectFolderDropdown()
@@ -62,8 +68,8 @@ public class MainScript : MonoBehaviour
         string targetFileName = Path.GetFileName(currentImagePathSelected);
         string outputFileName = Path.GetFileName(currentImagePathSelected);
         string folderPath = Path.Combine(mainFolderLocation, selectFolderLocation.options[selectFolderLocation.value].text).Replace("/","\\");
-        string outputFolderPath = Path.Combine(mainFolderLocation, selectFolderLocation.options[selectFolderLocation.value].text, "Labelled\\");
-        string outputForOriginalFilePath = Path.Combine(mainFolderLocation, selectFolderLocation.options[selectFolderLocation.value].text, "Processed\\");
+        string outputFolderPath = Path.Combine(mainFolderLocation, selectFolderLocation.options[selectFolderLocation.value].text, "Labelled\\").Replace("/", "\\");
+        string outputForOriginalFilePath = Path.Combine(mainFolderLocation, selectFolderLocation.options[selectFolderLocation.value].text, "Processed\\").Replace("/", "\\");
         string captionText = annotationField.text;
         captionText = captionText + '\n';
 
@@ -77,7 +83,7 @@ public class MainScript : MonoBehaviour
             Directory.CreateDirectory(outputForOriginalFilePath);
         }
 
-        string arguments = $" convert {folderPath}\\{targetFileName} -font Times-New-Roman -pointsize {fontSize.text} -background white -fill black label:\"{captionText}\" -gravity Center -append {outputFolderPath}{outputFileName}";
+        string arguments = $" convert \"{folderPath}\\{targetFileName}\" -font Times-New-Roman -pointsize {fontSize.text} -background white -fill black label:\"{captionText}\" -gravity Center -append \"{outputFolderPath}{outputFileName}\"";
         //convert d1.png -font Times-New-Roman -pointsize 24 -background white -fill black label:"This is a very long caption line." -gravity center -append d2.png
        
         // cd C:\Users\mgermain\Pictures\TestPictures\CatFolder\
@@ -86,7 +92,7 @@ public class MainScript : MonoBehaviour
         var startInfo = new ProcessStartInfo
         {
             Arguments = arguments,
-            FileName = @"C:/Program Files/ImageMagick/convert.exe"
+            FileName = imageMagikLocation
         };
         Process.Start(startInfo).WaitForExit();
         
