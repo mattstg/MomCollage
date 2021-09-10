@@ -40,6 +40,8 @@ public class MainScript : MonoBehaviour
     const float maxPixelWidthOfImg = 770;
     const float maxPixelHeightOfImg = 340;
 
+    const float heightOfAnnotationField = 86;
+
     public void Awake()
     {
         if (PlayerPrefs.HasKey("MainDirPath"))
@@ -97,7 +99,7 @@ public class MainScript : MonoBehaviour
             Directory.CreateDirectory(outputForOriginalFilePath);
         }
 
-        string arguments = $" convert \"{folderPath}\\{targetFileName}\" -font Times-New-Roman -pointsize {fontSize.text} -background white -fill black label:\"{captionText}\" -gravity Center -append \"{outputFolderPath}{outputFileName}\"";
+        string arguments = $" convert \"{folderPath}\\{targetFileName}\" -font Times-New-Roman -pointsize {fontSize.text} -background white -fill black label:\"{captionText}\" -gravity Left -append \"{outputFolderPath}{outputFileName}\"";
         //convert d1.png -font Times-New-Roman -pointsize 24 -background white -fill black label:"This is a very long caption line." -gravity center -append d2.png
        
         // cd C:\Users\mgermain\Pictures\TestPictures\CatFolder\
@@ -185,30 +187,27 @@ public class MainScript : MonoBehaviour
         selectedPicture.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2());
 
         //Need to set the ratio size as well
-        float ratio = texture.width / texture.height;
-        UnityEngine.Debug.Log("width: " + texture.width);
-        UnityEngine.Debug.Log("height: " + texture.height);
 
         float finalWidth = texture.width;
         float finalHeight = texture.height;
         
-        //if (texture.width > maxPixelWidthOfImg)
+        //if (finalWidth > maxPixelWidthOfImg)
         //{
         //    float shrinkRatio = maxPixelWidthOfImg / texture.width;
         //    finalWidth = maxPixelWidthOfImg;
         //    finalHeight *= shrinkRatio;
-        //    UnityEngine.Debug.Log("dis");
+        //    //UnityEngine.Debug.Log("dis");
         //}
         
-        if (finalWidth > maxPixelHeightOfImg)
+        if (finalHeight > maxPixelHeightOfImg)
         {
             float shrinkRatio = maxPixelHeightOfImg / texture.height;
             finalHeight = maxPixelHeightOfImg;
             finalWidth *= shrinkRatio;
-            UnityEngine.Debug.Log("dis2");
         }
 
-        selectedPicture.rectTransform.sizeDelta = new Vector2(finalWidth, finalHeight);
+        selectedPicture.rectTransform.sizeDelta = new Vector2(finalWidth, finalHeight); //
+        annotationField.GetComponent<RectTransform>().sizeDelta = new Vector2(finalWidth, heightOfAnnotationField);
     }
 
     public void SelectNextImage()
