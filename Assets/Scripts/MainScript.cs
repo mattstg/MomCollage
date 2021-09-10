@@ -36,8 +36,22 @@ public class MainScript : MonoBehaviour
     string folderNameSelected;
     Coroutine runningCR;
     bool crIsRunning;
+
+    const float maxPixelWidthOfImg = 770;
+    const float maxPixelHeightOfImg = 340;
+
     public void Awake()
     {
+        if (PlayerPrefs.HasKey("MainDirPath"))
+        {
+            mainFolderLocation = PlayerPrefs.GetString("MainDirPath");
+        }
+
+        if (PlayerPrefs.HasKey("ImgMagikDirPath"))
+        {
+            imageMagikLocation = PlayerPrefs.GetString("ImgMagikDirPath");
+        }
+
         selectablePicturesList = new List<PictureSelectScript>();
         //fill folderSelection dropdown
         FillSelectFolderDropdown();
@@ -49,7 +63,7 @@ public class MainScript : MonoBehaviour
         {
             mainFolderLocation = PlayerPrefs.GetString("MainDirPath");
         }
-
+    
         if (PlayerPrefs.HasKey("ImgMagikDirPath"))
         {
             imageMagikLocation = PlayerPrefs.GetString("ImgMagikDirPath");
@@ -167,7 +181,34 @@ public class MainScript : MonoBehaviour
         Texture2D texture = new Texture2D(2, 2);
         texture.LoadImage(bytes);
         //photoGraphic.material.SetTexture("_MainTex", texture);
+        
         selectedPicture.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2());
+
+        //Need to set the ratio size as well
+        float ratio = texture.width / texture.height;
+        UnityEngine.Debug.Log("width: " + texture.width);
+        UnityEngine.Debug.Log("height: " + texture.height);
+
+        float finalWidth = texture.width;
+        float finalHeight = texture.height;
+        
+        //if (texture.width > maxPixelWidthOfImg)
+        //{
+        //    float shrinkRatio = maxPixelWidthOfImg / texture.width;
+        //    finalWidth = maxPixelWidthOfImg;
+        //    finalHeight *= shrinkRatio;
+        //    UnityEngine.Debug.Log("dis");
+        //}
+        
+        if (finalWidth > maxPixelHeightOfImg)
+        {
+            float shrinkRatio = maxPixelHeightOfImg / texture.height;
+            finalHeight = maxPixelHeightOfImg;
+            finalWidth *= shrinkRatio;
+            UnityEngine.Debug.Log("dis2");
+        }
+
+        selectedPicture.rectTransform.sizeDelta = new Vector2(finalWidth, finalHeight);
     }
 
     public void SelectNextImage()
