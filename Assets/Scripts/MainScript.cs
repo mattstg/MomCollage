@@ -39,7 +39,7 @@ public class MainScript : MonoBehaviour
 
     const float maxPixelWidthOfImg = 770;
     const float maxPixelHeightOfImg = 340;
-
+    float shrinkRatio = 1;
     const float heightOfAnnotationField = 86;
 
     public void Awake()
@@ -99,7 +99,12 @@ public class MainScript : MonoBehaviour
             Directory.CreateDirectory(outputForOriginalFilePath);
         }
 
-        string arguments = $" convert \"{folderPath}\\{targetFileName}\" -font Times-New-Roman -pointsize {fontSize.text} -background white -fill black label:\"{captionText}\" -gravity Left -append \"{outputFolderPath}{outputFileName}\"";
+        int fontSizeReal = (int)(int.Parse(fontSize.text) / shrinkRatio);
+
+        UnityEngine.Debug.Log("font size: " + fontSizeReal.ToString());
+
+
+        string arguments = $" convert \"{folderPath}\\{targetFileName}\" -font Times-New-Roman -pointsize {fontSizeReal.ToString()} -background white -fill black label:\"{captionText}\" -gravity NorthWest -append \"{outputFolderPath}{outputFileName}\"";
         //convert d1.png -font Times-New-Roman -pointsize 24 -background white -fill black label:"This is a very long caption line." -gravity center -append d2.png
        
         // cd C:\Users\mgermain\Pictures\TestPictures\CatFolder\
@@ -201,7 +206,7 @@ public class MainScript : MonoBehaviour
         
         if (finalHeight > maxPixelHeightOfImg)
         {
-            float shrinkRatio = maxPixelHeightOfImg / texture.height;
+            shrinkRatio = maxPixelHeightOfImg / texture.height;
             finalHeight = maxPixelHeightOfImg;
             finalWidth *= shrinkRatio;
         }
